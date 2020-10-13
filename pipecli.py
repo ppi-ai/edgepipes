@@ -5,6 +5,9 @@ import edgepipes, threading, os
 from cmd import Cmd
 import networkx as nx
 import matplotlib.pyplot as plt
+import webserver
+
+wsthread = None
 
 def plot(g, labels):
     print("Plotting... Thread:", threading.get_ident())
@@ -51,6 +54,11 @@ class PipeCli(Cmd):
         self.pipeline.scheduler.enter(1, 1, plot, argument=(g,labels,))
         print("Done...")
 
+    def do_webserver(self, inp):
+        global wsthread
+        print("Starting webserver")
+        wsthread = threading.Thread(target=webserver.run, args=[self.pipeline])
+        wsthread.start()
 
     def emptyline(self):
         return
@@ -73,7 +81,7 @@ class PipeCli(Cmd):
                     return
             txt = f.read()
             print("Load graphs: '{}'".format(txt))
-            self.pipeline.setup_pipeline(txt, prefix=str(self.ctr) + "/", options={'input_video': {'video': self.camera}})
+            self.pipeline.setup_pipeline(txt, prefix=str(self.ctr) + ".", options={'input_video': {'video': self.camera}})
             self.ctr += 1
 
     def do_start(self, inp):
@@ -91,4 +99,6 @@ p = PipeCli()
 thread = threading.Thread(target=p.cmdloop)
 thread.start()
 p.pipeline.run()
+wsthread.stop()
+wsthread.join()
 thread.join()
