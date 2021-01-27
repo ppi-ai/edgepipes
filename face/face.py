@@ -1,7 +1,7 @@
 import cv2
 import face_recognition
 import os
-from calculators.core import Calculator
+from calculators.core import Calculator, TextData
 from calculators.image import ImageData
 
 _known_face_encodings = []
@@ -36,15 +36,18 @@ class FaceRecognizer(Calculator):
         image = self.get(0)
         if isinstance(image, ImageData):
             nf = image.image.copy()
-            nf = self._process_image(nf)
+            nf, name = self._process_image(nf)
             self.set_output(0, ImageData(nf, image.timestamp))
+            self.set_output(1, TextData(name, image.timestamp))
             return True
         return False
 
     def _process_image(self, frame):
         global _known_face_names
         global _known_face_encodings
-
+        
+        name = None
+        
         # Scale image for faster processing
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -70,14 +73,8 @@ class FaceRecognizer(Calculator):
             cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 3)
             font = cv2.FONT_HERSHEY_SIMPLEX
             cv2.putText(frame, name, (left, top - 5), font, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
-            cut = frame[top:bottom, left:right]
-            if match:
-                print("Name: ", name)
-                cut = cut.copy()
-                cv2.putText(cut, name, (5, 22), font, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
-            cv2.imshow('Face', cut)
 
-        return frame
+        return frame, name
 
 
 class FaceDetector(Calculator):

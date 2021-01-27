@@ -1,0 +1,77 @@
+input_stream: "input_video"
+input_stream:  "input_audio"
+output_stream: "output_video"
+
+# Calculate diff on image and only send on when large diff is detected
+node: {
+  calculator: "ImageMovementDetector"
+  input_stream: "input_video"
+  output_stream: "motion_detected"
+  map_node_options: {
+    doubleOptions: { key:"threshold"; value:0.01 }
+    doubleOptions: { key:"min_fps"; value:1.0 }
+    doubleOptions: { key:"max_fps"; value:4.0 }
+  }
+}
+
+node: {
+  calculator: "face.face.FaceRecognizer"
+  input_stream: "motion_detected"
+  output_stream: "output_face"
+  output_stream: "face_recognized"
+}
+
+node: {
+  calculator: "VoskVoiceToTextCalculator"
+  input_stream: "input_audio"
+  output_stream: "voice_to_text"
+  output_stream: "voice_to_word"
+}
+
+node: {
+  calculator: "ShowStatusImageFromFiles"
+  input_stream: "voice_to_word"
+  output_stream: "voice_status"
+  map_node_options: {
+    stringOptions: { key:"onImage"; value:"images/on.png" }
+    stringOptions: { key:"onWord";  value:"open" }
+    stringOptions: { key:"offImage"; value:"images/off.png" }
+    doubleOptions: { key:"statusOnTime"; value:6.0 }
+  }
+}
+
+
+node: {
+  calculator: "PlaySound"
+  input_stream: "voice_to_word"
+  input_stream: "face_recognized"
+  map_node_options: {
+    stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
+    stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
+    stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"audio"; value:"name:Jabra" }
+  }
+}
+
+node: {
+    calculator: "ShowImage"
+    input_stream: "voice_status"
+    map_node_options: {
+        stringOptions: { key:"windowTitle"; value:"Voice Status" }
+    }
+}
+
+node: {
+    calculator: "ShowImage"
+    input_stream: "output_face"
+    map_node_options: {
+        stringOptions: { key:"windowTitle"; value:"Face Status" }
+    }
+}
+
+
+node: {
+  calculator: "ConsumerNode"
+  input_stream: "voice_to_text"
+  input_stream: "output_face"
+}

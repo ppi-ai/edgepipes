@@ -210,7 +210,7 @@ class CaptureNode(Calculator):
             elif self.video.startswith("rpicam"):
                 cw, ch = 640, 480
                 dw, dh = 640, 480
-                fps = 15
+                fps = 8
                 flip = 2
                 self.video = ('nvarguscamerasrc ! '
                               'video/x-raw(memory:NVMM), width=%d, height=%d, format=NV12, framerate=%d/1 ! '
