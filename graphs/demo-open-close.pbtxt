@@ -1,0 +1,47 @@
+input_stream:  "input_audio"
+output_stream: "output_video"
+
+node: {
+  calculator: "VoskVoiceToTextCalculator"
+  input_stream: "input_audio"
+  output_stream: "voice_to_text"
+  output_stream: "voice_to_word"
+}
+
+node: {
+  calculator: "ShowStatusImageFromFiles"
+  input_stream: "voice_to_word"
+  output_stream: "voice_status"
+  map_node_options: {
+    stringOptions: { key:"onImage"; value:"images/on.png" }
+    stringOptions: { key:"onWord";  value:"open" }
+    stringOptions: { key:"offImage"; value:"images/off.png" }
+    doubleOptions: { key:"statusOnTime"; value:6.0 }
+  }
+}
+
+
+node: {
+  calculator: "PlaySound"
+  input_stream: "voice_to_word"
+  map_node_options: {
+    stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
+    stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
+    stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"audio"; value:"name:Jabra" }
+  }
+}
+
+node: {
+    calculator: "ShowImage"
+    input_stream: "voice_status"
+    map_node_options: {
+        stringOptions: { key:"windowTitle"; value:"Voice Status" }
+    }
+}
+
+
+node: {
+  calculator: "ConsumerNode"
+  input_stream: "voice_to_text"
+}

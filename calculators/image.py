@@ -208,9 +208,9 @@ class CaptureNode(Calculator):
                 self.monitor_area = self.screens.monitors[monitor]
                 print(f"*** Capture from {self.video} area {self.monitor_area}")
             elif self.video.startswith("rpicam"):
-                cw, ch = 1280, 720
-                dw, dh = 1280, 720
-                fps = 8
+                cw, ch = 640, 480
+                dw, dh = 640, 480
+                fps = 15
                 flip = 2
                 self.video = ('nvarguscamerasrc ! '
                               'video/x-raw(memory:NVMM), width=%d, height=%d, format=NV12, framerate=%d/1 ! '

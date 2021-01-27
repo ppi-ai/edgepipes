@@ -5,7 +5,7 @@ import json
 import pyaudio
 import re
 import wave
-
+from datetime import datetime
 
 class AudioData:
     def __init__(self, audio, timestamp):
@@ -173,24 +173,29 @@ class PlaySound(Calculator):
 
     def __init__(self, name, s, options=None):
         super().__init__(name, s, options)
-        self._sound_table = {}
-        if options is not None:
-            for w in [w for w in options.keys() if w.startswith("on")]:
-                self._sound_table[w[2:].lower()] = options[w]
-            if 'audio' in options:
+        self.sound_table = {}
+        self.options = options
+        if self.options is not None:
+            if 'audio' in self.options:
                 self.audio_index = _find_audio_index(options['audio'], True)
 
     def process(self):
         text = self.get(0)
+        hour = datetime.now().hour
+        if hour < 14:
+            self.sound_table["open"] = self.options["onOpenMorn"]
+        else:
+            self.sound_table["open"] = self.options["onOpenEven"]
+		    
         if not isinstance(text, TextData):
             if self._stream and not self._stream.is_active():
                 self.stop_sound()
             return False
 
         sound_file = None
-        for w in self._sound_table.keys():
+        for w in self.sound_table.keys():
             if w in text.text:
-                sound_file = self._sound_table[w]
+                sound_file = self.sound_table[w]
                 break
 
         if sound_file is None:
