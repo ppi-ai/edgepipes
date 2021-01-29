@@ -113,6 +113,9 @@ class ShowStatusImageFromFiles(Calculator):
         if 'offImage' in options:
             im_name = options['offImage']
             self.offImage = cv2.imread(im_name)
+        if 'errImage' in options:
+            im_name = options['errImage']
+            self.errImage = cv2.imread(im_name)
         self.onWord = 'on'
         if 'onWord' in options:
             self.onWord = options['onWord']
@@ -137,7 +140,7 @@ class ShowStatusImageFromFiles(Calculator):
         self._current_status = status
         now = datetime.now()
         timestamp = datetime.timestamp(now)
-        if status:
+        if status :
             self._last_on_time = time.time()
             self.set_output(0, ImageData(self.onImage, timestamp))
         else:
@@ -145,15 +148,17 @@ class ShowStatusImageFromFiles(Calculator):
 
     def process(self):
         data = self.get(0)
-        if isinstance(data, TextData):
-            if self.onWord in data.text:
-                if not self._current_status:
-                    print(f"Status ON  ({data.text})")
-                self.set_status(True)
-            elif (not self.offWord and self.status_on_time == 0) or (self.offWord and self.offWord in data.text):
-                if self._current_status:
-                    print(f"Status OFF ({data.text})")
-                self.set_status(False)
+        face = self.get(1)
+        if isinstance(data, TextData) and isinstance(face, TextData):
+            if face.text is not None:
+                if self.onWord in data.text:
+                    if not self._current_status:
+                        print(f"Status ON  ({data.text})")
+                    self.set_status(True)
+                elif (not self.offWord and self.status_on_time == 0) or (self.offWord and self.offWord in data.text):
+                    if self._current_status:
+                        print(f"Status OFF ({data.text})")
+                    self.set_status(False)
         if self._current_status and self.status_on_time > 0 and self._last_on_time + self.status_on_time <= time.time():
             print("Status OFF by timeout")
             self.set_status(False)
