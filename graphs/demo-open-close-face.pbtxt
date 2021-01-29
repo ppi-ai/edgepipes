@@ -12,6 +12,7 @@ node: {
 node: {
   calculator: "VoskVoiceToTextCalculator"
   input_stream: "input_audio"
+  input_stream: "face_recognized"
   output_stream: "voice_to_text"
   output_stream: "voice_to_word"
 }

@@ -138,29 +138,32 @@ class VoskVoiceToTextCalculator(Calculator):
 
     def process(self):
         audio = self.get(0)
-        if isinstance(audio, AudioData):
-            if self.rec.AcceptWaveform(audio.audio):
-                result = self.rec.Result()
-                try:
-                    result_json = json.loads(result)
-                except json.decoder.JSONDecodeError as e:
-                    print("Voice2Text: Failed to parse voice json:", e)
-                    print(result)
+        face  = self.get(1)
+        
+        if face.text is not None:
+            if isinstance(audio, AudioData):
+                if self.rec.AcceptWaveform(audio.audio):
+                    result = self.rec.Result()
+                    try:
+                        result_json = json.loads(result)
+                    except json.decoder.JSONDecodeError as e:
+                        print("Voice2Text: Failed to parse voice json:", e)
+                        print(result)
+                    else:
+                        if 'text' in result_json:
+                            text = result_json['text']
+                            if text:
+                                print("Voice2Text:", repr(text), result_json)
+                                self.set_output(0, VoiceTextData(text, audio.timestamp, info=result_json))
                 else:
-                    if 'text' in result_json:
-                        text = result_json['text']
+                    partial_result = self.rec.PartialResult()
+                    partial_json = json.loads(partial_result)
+                    if 'partial' in partial_json:
+                        text = partial_json['partial']
                         if text:
-                            print("Voice2Text:", repr(text), result_json)
-                            self.set_output(0, VoiceTextData(text, audio.timestamp, info=result_json))
-            else:
-                partial_result = self.rec.PartialResult()
-                partial_json = json.loads(partial_result)
-                if 'partial' in partial_json:
-                    text = partial_json['partial']
-                    if text:
-                        print("Voice2Text (partial): ", repr(text))
-                        self.set_output(1, VoiceTextData(text, audio.timestamp, info=partial_json))
-            return True
+                            print("Voice2Text (partial): ", repr(text))
+                            self.set_output(1, VoiceTextData(text, audio.timestamp, info=partial_json))
+                return True
         return False
 
 
@@ -255,7 +258,98 @@ class PlaySound(Calculator):
     def close(self):
         self.stop_sound()
 
+class PlaySoundMask(Calculator):
 
+    audio_index = None
+    _sound = None
+    _stream = None
+    _wf = None
+
+    def __init__(self, name, s, options=None):
+        super().__init__(name, s, options)
+        self.sound_table = {}
+        self.options = options
+        if self.options is not None:
+            if 'audio' in self.options:
+                self.audio_index = _find_audio_index(options['audio'], True)
+
+    def process(self):
+        text = self.get(0)
+        masks = self.get(1)
+        
+        detect = masks[0][0]
+            
+        hour = datetime.now().hour
+        if face is not None:
+            if face.text == "Unknown":
+                self.sound_table["open"] = self.options["sorry"]
+            elif face.text == None:
+                self.sound_table = {}
+            else:
+                if hour < 14:
+                    self.sound_table["open"] = self.options["onOpenMorn"]
+                else:
+                    self.sound_table["open"] = self.options["onOpenEven"]
+		    
+        if not isinstance(text, TextData):
+            if self._stream and not self._stream.is_active():
+                self.stop_sound()
+            return False
+
+        sound_file = None
+        for w in self.sound_table.keys():
+            if w in text.text:
+                sound_file = self.sound_table[w]
+                break
+
+        if sound_file is None:
+            return False
+
+        if self._stream:
+            if self._stream.is_active() and sound_file == self._sound:
+                print(f"On '{text.text}' playing {sound_file} (already playing)")
+                return True
+            self.stop_sound()
+
+        print(f"On '{text.text}' playing {sound_file}")
+
+        try:
+            # open the file for reading.
+            self._wf = wave.open(sound_file, 'rb')
+            self._sound = sound_file
+
+            # length of data to read.
+            chunk = 1024
+            paud = get_pyaudio()
+            self._stream = paud.open(format=paud.get_format_from_width(self._wf.getsampwidth()),
+                                     output_device_index=self.audio_index,
+                                     channels=self._wf.getnchannels(),
+                                     rate=self._wf.getframerate(),
+                                     frames_per_buffer=chunk,
+                                     stream_callback=self._playing_callback,
+                                     output=True)
+            self._stream.start_stream()
+            return True
+        except FileNotFoundError:
+            print("Could not open the sound file", sound_file)
+        return False
+
+    def _playing_callback(self, in_data, frame_count, time_info, status):
+        data = self._wf.readframes(frame_count) if self._wf else b''
+        return (data, pyaudio.paContinue) if data else (data, pyaudio.paComplete)
+
+    def stop_sound(self):
+        if self._stream:
+            self._stream.stop_stream()
+            self._stream.close()
+            self._stream = None
+        if self._wf:
+            self._wf.close()
+            self._wf = None
+        self._sound = None
+
+    def close(self):
+        self.stop_sound()
 _pyaudio = None
 
 

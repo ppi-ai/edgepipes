@@ -313,6 +313,7 @@ class DrawDetections(Calculator):
         if self.input_data[0] is not None and self.input_data[1] is not None:
             image = self.get(0)
             detections = self.get(1)
+            print(detections[0][0])
             if isinstance(image, ImageData):
                 frame = image.image.copy()
                 cvutils.drawDetections(frame, detections)
