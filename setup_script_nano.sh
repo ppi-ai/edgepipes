@@ -7,7 +7,7 @@ echo 'bind '"\e[B": history-search-forward'' >> ~/.bashrc
 echo 'alias rm='rm -i'' >> ~/.bashrc 
 echo 'alias cl='clear'' >> ~/.bashrc 
 echo 'alias lo='logout'' >> ~/.bashrc 
-
+source ~/.bashrc
 
 # Set up  gedit editor
 echo "Setting up gedit"
@@ -20,6 +20,11 @@ gsettings set org.gnome.gedit.preferences.editor tabs-size uint32 4
 gsettings set org.gnome.gedit.preferences.editor auto-indent true
 gsettings set org.gnome.gedit.preferences.editor display-overview-map true
 gsettings set org.gnome.gedit.preferences.editor scheme 'oblivion'
+
+# pip commands for edgepipes
+pip install flask
+pip install flask-socketio
+pip install pyvis
 
 # setup git
 echo "Setting up git"

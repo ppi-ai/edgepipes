@@ -31,12 +31,14 @@ node: {
 node: {
   calculator: "ShowStatusImageFromFiles"
   input_stream: "voice_to_word"
+  input_stream: "face_recognized"
   output_stream: "voice_status"
   map_node_options: {
     stringOptions: { key:"onImage"; value:"images/on.png" }
     stringOptions: { key:"onWord";  value:"open" }
     stringOptions: { key:"offImage"; value:"images/off.png" }
-    doubleOptions: { key:"statusOnTime"; value:6.0 }
+    stringOptions: { key:"errImage"; value:"images/err.png" }
+    doubleOptions: { key:"statusOnTime"; value:4.0 }
   }
 }
 
