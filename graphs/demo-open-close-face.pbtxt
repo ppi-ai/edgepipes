@@ -21,7 +21,7 @@ node: {
   calculator: "ShowStatusImageFromFiles"
   input_stream: "voice_to_word"
   input_stream: "face_recognized"
-  output_stream: "voice_status"
+  output_stream: "door_status"
   map_node_options: {
     stringOptions: { key:"onImage"; value:"images/on.png" }
     stringOptions: { key:"onWord";  value:"open" }
@@ -46,9 +46,9 @@ node: {
 
 node: {
     calculator: "ShowImage"
-    input_stream: "voice_status"
+    input_stream: "door_status"
     map_node_options: {
-        stringOptions: { key:"windowTitle"; value:"Voice Status" }
+        stringOptions: { key:"windowTitle"; value:"Door Status" }
     }
 }
 

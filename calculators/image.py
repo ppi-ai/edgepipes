@@ -157,7 +157,64 @@ class ShowStatusImageFromFiles(Calculator):
             self.set_status('OFF')
         return True
         
+class ShowStatusImageFromFilesdummy(Calculator):
+    status_on_time = 0
+    _current_status = False
+    _last_on_time = 0
 
+    _window_title = 'Status'
+
+    def __init__(self, name, s, options=None):
+        super().__init__(name, s, options)
+        if options is None:
+            options = {}
+        self.output_data = [None]
+        if 'onImage' in options:
+            im_name = options['onImage']
+            self.onImage = cv2.imread(im_name)
+        if 'offImage' in options:
+            im_name = options['offImage']
+            self.offImage = cv2.imread(im_name)
+        if 'errImage' in options:
+            im_name = options['errImage']
+            self.errImage = cv2.imread(im_name)
+        self.onWord = 'on'
+        if 'onWord' in options:
+            self.onWord = options['onWord']
+        self.errWord = 'Unknown'
+        if 'errWord' in options:
+            self.errWord = options['errWord']
+            
+        if 'statusOnTime' in options:
+            self.status_on_time = options['statusOnTime']
+        self.output_data = [None]
+
+    def set_status(self, status):
+        self._current_status = status
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+        if status == 'ON':
+            self._last_on_time = time.time()
+            self.set_output(0, ImageData(self.onImage, timestamp))
+        elif status == 'ERR':
+            self._last_on_time = time.time()
+            self.set_output(0, ImageData(self.errImage, timestamp))
+        elif status == 'OFF':
+            self.set_output(0, ImageData(self.offImage, timestamp))
+
+    def process(self):
+        data = self.get(0)
+
+        if isinstance(data, TextData):
+            print(data.text)
+            if self.onWord in data.text:
+                self.set_status('ON')
+                    
+        if (self._current_status != 'OFF') and self.status_on_time > 0 and self._last_on_time + self.status_on_time <= time.time():
+            print("Status OFF by timeout")
+            self.set_status('OFF')
+        return True
+        
 class InputSwitchButton(SwitchNode):
 
     _update_image = True
@@ -292,7 +349,7 @@ class TRTYoloDetector(Calculator):
             
             if len(d) > 0:
                 status = d[0]
-                self.set_output(0, status)
+                self.set_output(0, TextData(status, image.timestamp))
                 return True
         return False
 

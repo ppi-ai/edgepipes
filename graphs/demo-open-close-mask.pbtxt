@@ -1,0 +1,34 @@
+input_stream: "input_video"
+
+
+# Calculate diff on image and only send on when large diff is detected
+
+node: {
+  calculator: "TRTYoloDetector"
+  input_stream: "input_video"
+  output_stream: "yolo_detections"
+}
+
+node: {
+  calculator: "ShowStatusImageFromFilesdummy"
+  input_stream: "yolo_detections"
+  output_stream: "door_status"
+  map_node_options: {
+    stringOptions: { key:"onImage"; value:"images/on.png" }
+    stringOptions: { key:"onWord";  value:"good" }
+    stringOptions: { key:"offImage"; value:"images/off.png" }
+    stringOptions: { key:"errImage"; value:"images/err.png" }
+    doubleOptions: { key:"statusOnTime"; value:4.0 }
+  }
+}
+
+node: {
+    calculator: "ShowImage"
+    input_stream: "door_status"
+    map_node_options: {
+        stringOptions: { key:"windowTitle"; value:"Door Status" }
+    }
+}
+
+
+
