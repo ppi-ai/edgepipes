@@ -140,10 +140,13 @@ class ShowStatusImageFromFiles(Calculator):
         self._current_status = status
         now = datetime.now()
         timestamp = datetime.timestamp(now)
-        if status :
+        if status == 'ON':
             self._last_on_time = time.time()
             self.set_output(0, ImageData(self.onImage, timestamp))
-        else:
+        elif status == 'ERR':
+            self._last_on_time = time.time()
+            self.set_output(0, ImageData(self.errImage, timestamp))
+        elif status == 'OFF':
             self.set_output(0, ImageData(self.offImage, timestamp))
 
     def process(self):
@@ -151,17 +154,17 @@ class ShowStatusImageFromFiles(Calculator):
         face = self.get(1)
         if isinstance(data, TextData) and isinstance(face, TextData):
             if face.text is not None:
-                if self.onWord in data.text:
-                    if not self._current_status:
-                        print(f"Status ON  ({data.text})")
-                    self.set_status(True)
-                elif (not self.offWord and self.status_on_time == 0) or (self.offWord and self.offWord in data.text):
-                    if self._current_status:
-                        print(f"Status OFF ({data.text})")
-                    self.set_status(False)
-        if self._current_status and self.status_on_time > 0 and self._last_on_time + self.status_on_time <= time.time():
+                print("CURRENT Status = {}, face = {}".format(self._current_status, face.text))
+                if self.onWord in data.text and face.text != "Unknown":
+                    self.set_status('ON')
+                    
+                elif self.onWord in data.text and face.text == "Unknown":
+                    self.set_status('ERR')    
+                    
+                    
+        if (self._current_status != 'OFF') and self.status_on_time > 0 and self._last_on_time + self.status_on_time <= time.time():
             print("Status OFF by timeout")
-            self.set_status(False)
+            self.set_status('OFF')
         return True
 
 

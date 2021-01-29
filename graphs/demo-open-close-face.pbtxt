@@ -2,21 +2,9 @@ input_stream: "input_video"
 input_stream:  "input_audio"
 output_stream: "output_video"
 
-# Calculate diff on image and only send on when large diff is detected
-node: {
-  calculator: "ImageMovementDetector"
-  input_stream: "input_video"
-  output_stream: "motion_detected"
-  map_node_options: {
-    doubleOptions: { key:"threshold"; value:0.01 }
-    doubleOptions: { key:"min_fps"; value:1.0 }
-    doubleOptions: { key:"max_fps"; value:4.0 }
-  }
-}
-
 node: {
   calculator: "face.face.FaceRecognizer"
-  input_stream: "motion_detected"
+  input_stream: "input_video"
   output_stream: "output_face"
   output_stream: "face_recognized"
 }
