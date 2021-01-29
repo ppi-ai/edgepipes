@@ -119,21 +119,12 @@ class ShowStatusImageFromFiles(Calculator):
         self.onWord = 'on'
         if 'onWord' in options:
             self.onWord = options['onWord']
-        self.offWord = None
-        if 'offWord' in options:
-            self.offWord = options['offWord']
-        if 'offWord' in options:
-            self.offWord = options['offWord']
+        self.errWord = 'Unknown'
+        if 'errWord' in options:
+            self.errWord = options['errWord']
+            
         if 'statusOnTime' in options:
             self.status_on_time = options['statusOnTime']
-        if 'autoOpen' in options:
-            auto_open = options['autoOpen']
-            if auto_open == 'on':
-                self.set_status(True)
-            elif auto_open == 'off':
-                self.set_status(False)
-            else:
-                print("Illegal auto open value:", auto_open)
         self.output_data = [None]
 
     def set_status(self, status):
@@ -155,18 +146,17 @@ class ShowStatusImageFromFiles(Calculator):
         if isinstance(data, TextData) and isinstance(face, TextData):
             if face.text is not None:
                 print("CURRENT Status = {}, face = {}".format(self._current_status, face.text))
-                if self.onWord in data.text and face.text != "Unknown":
+                if self.onWord in data.text and face.text != self.errWord:
                     self.set_status('ON')
                     
-                elif self.onWord in data.text and face.text == "Unknown":
-                    self.set_status('ERR')    
-                    
+                elif self.onWord in data.text and face.text == self.errWord:
+                    self.set_status('ERR')            
                     
         if (self._current_status != 'OFF') and self.status_on_time > 0 and self._last_on_time + self.status_on_time <= time.time():
             print("Status OFF by timeout")
             self.set_status('OFF')
         return True
-
+        
 
 class InputSwitchButton(SwitchNode):
 
@@ -297,10 +287,13 @@ class TRTYoloDetector(Calculator):
             d = []
             for i in range(len(boxes)):
                 c = int(clss[i])
-                d.append((self.cls_dict[c], confs[i], (boxes[i][0], boxes[i][1], boxes[i][2], boxes[i][3])))
-            self.set_output(0, ImageData(nf, image.timestamp))
-            self.set_output(1, d)
-            return True
+                d.append(self.cls_dict[c])
+            #self.set_output(0, ImageData(nf, image.timestamp))
+            
+            if len(d) > 0:
+                status = d[0]
+                self.set_output(0, status)
+                return True
         return False
 
 
@@ -313,7 +306,7 @@ class DrawDetections(Calculator):
         if self.input_data[0] is not None and self.input_data[1] is not None:
             image = self.get(0)
             detections = self.get(1)
-            print(detections[0][0])
+
             if isinstance(image, ImageData):
                 frame = image.image.copy()
                 cvutils.drawDetections(frame, detections)
