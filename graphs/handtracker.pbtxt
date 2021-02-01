@@ -4,29 +4,31 @@
 input_stream: "input_video"
 output_stream: "output_video"
 
-# Calculate diff on image and only send on when large diff is detected
-
 node: {
-  calculator: "ImageMovementDetector"
+  calculator: "HandDetector"
   input_stream: "input_video"
-  output_stream: "motion_detected"
-  map_node_options: {
-    doubleOptions: { key:"threshold"; value:0.02 }
-    stringOptions: { key:"hej"; value:"a string" }
-  }
+  output_stream: "hand_detector_img"
+  output_stream: "hand_detections"
 }
 
 node: {
-  calculator: "HandDetector"
-  input_stream: "motion_detected"
-  output_stream: "hand_detector_img"
-  output_stream: "hand_detections"
+  calculator: "HandThumbDetector"
+  input_stream: "hand_detections"
+  output_stream: "thumb_detections"
 }
 
 # Applies a box and label annotator to the image
 node: {
   calculator: "DrawHandDetections"
-  input_stream: "motion_detected"
+  input_stream: "input_video"
   input_stream: "hand_detections"
   output_stream: "output_video"
 }
+
+
+node: {
+  calculator: "ConsumerNode"
+  input_stream: "hand_detector_img"
+  input_stream: "thumb_detections"
+}
+

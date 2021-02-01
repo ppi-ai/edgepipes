@@ -33,6 +33,26 @@ class HandDetector(Calculator):
             return True
         return False
 
+class HandDetector2(Calculator):
+    def __init__(self, name, s, options=None):
+        super().__init__(name, s)
+        self.input_data = [None]
+        self.detector = handtracker.hand_tracker.HandTracker(palm_model_path, landmark_model_path, anchors_path,
+                                                             box_shift=0.2, box_enlarge=1.3)
+
+    def process(self):
+        image = self.get(0)
+        if isinstance(image, ImageData):
+            nf = image.image.copy()
+            img = nf[:, :, ::-1]
+            kp, box = self.detector(img)
+
+            if kp is not None:
+                self.set_output(0, (kp, box))
+            else:
+                self.set_output(0, None)
+            return True
+        return False
 
 class DrawHandDetections(Calculator):
     def __init__(self, name, s, options=None):

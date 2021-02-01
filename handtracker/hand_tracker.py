@@ -145,7 +145,8 @@ class HandTracker:
 
         # finding the best prediction
         # TODO: replace it with non-max suppression
-        detecion_mask = self._sigm(out_clf) > 0.7
+        detecion_mask = self._sigm(out_clf) > 0.9
+
         candidate_detect = out_reg[detecion_mask]
         candidate_anchors = self.anchors[detecion_mask]
 

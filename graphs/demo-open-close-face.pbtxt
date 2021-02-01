@@ -20,7 +20,7 @@ node: {
 
 node: {
   calculator: "ShowStatusImageFromFiles"
-  input_stream: "voice_to_word"
+  input_stream: "voice_to_text"
   input_stream: "face_recognized"
   output_stream: "door_light"
   output_stream: "door_status"
@@ -36,7 +36,7 @@ node: {
 
 node: {
   calculator: "PlaySound"
-  input_stream: "voice_to_word"
+  input_stream: "voice_to_text"
   input_stream: "face_recognized"
   map_node_options: {
     stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
@@ -65,6 +65,6 @@ node: {
 
 node: {
   calculator: "ConsumerNode"
-  input_stream: "voice_to_text"
+  input_stream: "voice_to_word"
   input_stream: "output_face"
 }

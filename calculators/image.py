@@ -145,7 +145,7 @@ class ShowStatusImageFromFiles(Calculator):
         face = self.get(1)
         if isinstance(data, TextData) and isinstance(face, TextData):
             if face.text is not None:
-                #print("CURRENT Status = {}, face = {}".format(self._current_status, face.text))
+                print("CURRENT Status = {}, face = {}".format(self._current_status, face.text))
                 if self.onWord in data.text and face.text != self.errWord:
                     self.set_status('ON')
                     

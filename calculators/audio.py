@@ -162,7 +162,7 @@ class VoskVoiceToTextCalculator(Calculator):
                         if 'partial' in partial_json:
                             text = partial_json['partial']
                             if text:
-                                print("Voice2Text (partial): ", repr(text))
+                                #print("Voice2Text (partial): ", repr(text))
                                 self.set_output(1, VoiceTextData(text, audio.timestamp, info=partial_json))
                     return True
         return False

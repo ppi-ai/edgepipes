@@ -1,7 +1,33 @@
 input_stream: "input_video"
 
+node: {
+  calculator: "HandDetector2"
+  input_stream: "input_video"
+  output_stream: "hand_detections"
+}
 
-# Calculate diff on image and only send on when large diff is detected
+node: {
+  calculator: "HandThumbDetector"
+  input_stream: "hand_detections"
+  output_stream: "thumb_detections"
+}
+
+node: {
+  calculator: "ShowStatusImageFromFiles"
+  input_stream: "thumb_detections"
+  input_stream: "yolo_detections"
+  output_stream: "door_light"
+  output_stream: "door_status"
+  map_node_options: {
+    stringOptions: { key:"windowTitle"; value:"Thumb Status" }
+    stringOptions: { key:"onImage"; value:"images/on.png" }
+    stringOptions: { key:"offImage"; value:"images/off.png" }
+    stringOptions: { key:"errImage"; value:"images/err.png" }
+    stringOptions: { key:"onWord";  value:"Thumb up" }
+    stringOptions: { key:"errWord";  value:"No Mask" }
+    doubleOptions: { key:"statusOnTime"; value: 4.0 }
+    }
+}
 
 node: {
   calculator: "TRTYoloDetector"
@@ -10,25 +36,28 @@ node: {
 }
 
 node: {
-  calculator: "ShowStatusImageFromFilesdummy"
+  calculator: "PlaySound"
+  input_stream: "thumb_detections"
   input_stream: "yolo_detections"
-  output_stream: "door_status"
   map_node_options: {
-    stringOptions: { key:"onImage"; value:"images/on.png" }
-    stringOptions: { key:"onWord";  value:"good" }
-    stringOptions: { key:"offImage"; value:"images/off.png" }
-    stringOptions: { key:"errImage"; value:"images/err.png" }
-    doubleOptions: { key:"statusOnTime"; value:4.0 }
+    stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
+    stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
+    stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"audio"; value:"name:Jabra" }
   }
 }
 
 node: {
     calculator: "ShowImage"
-    input_stream: "door_status"
+    input_stream: "door_light"
     map_node_options: {
         stringOptions: { key:"windowTitle"; value:"Door Status" }
     }
 }
 
+node: {
+  calculator: "ConsumerNode"
+  input_stream: "door_status"
+}
 
 
