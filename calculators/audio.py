@@ -182,6 +182,11 @@ class PlaySound(Calculator):
         if self.options is not None:
             if 'audio' in self.options:
                 self.audio_index = _find_audio_index(options['audio'], True)
+            self.errWord = 'Unknown'
+            if 'errWord' in options:
+                self.errWord = options['errWord']
+            if 'onWord' in options:
+                self.onWord = options['onWord']
 
     def process(self):
         text = self.get(0)
@@ -189,15 +194,15 @@ class PlaySound(Calculator):
         
         hour = datetime.now().hour
         if face is not None:
-            if face.text == "Unknown":
-                self.sound_table["open"] = self.options["sorry"]
+            if self.errWord in face.text:
+                self.sound_table[self.onWord] = self.options["sorry"]
             elif face.text == None:
                 self.sound_table = {}
             else:
                 if hour < 14:
-                    self.sound_table["open"] = self.options["onOpenMorn"]
+                    self.sound_table[self.onWord] = self.options["onOpenMorn"]
                 else:
-                    self.sound_table["open"] = self.options["onOpenEven"]
+                    self.sound_table[self.onWord] = self.options["onOpenEven"]
 		    
         if not isinstance(text, TextData):
             if self._stream and not self._stream.is_active():

@@ -41,17 +41,25 @@ class HandDetector2(Calculator):
                                                              box_shift=0.2, box_enlarge=1.3)
 
     def process(self):
-        image = self.get(0)
-        if isinstance(image, ImageData):
-            nf = image.image.copy()
-            img = nf[:, :, ::-1]
-            kp, box = self.detector(img)
+        image  = self.get(0)
+        mask   = self.get(1)
+        status = self.get(2)
+        if isinstance(status, TextData):
+            if status.text == 'ON' or status.text == 'ERR':
+                return False
+                
+        if isinstance(mask, TextData):
+            print("Face detected : ", mask.text)
+            if isinstance(image, ImageData):
+                nf = image.image.copy()
+                img = nf[:, :, ::-1]
+                kp, box = self.detector(img)
 
-            if kp is not None:
-                self.set_output(0, (kp, box))
-            else:
-                self.set_output(0, None)
-            return True
+                if kp is not None:
+                    self.set_output(0, (kp, box))
+                else:
+                    self.set_output(0, None)
+                return True
         return False
 
 class DrawHandDetections(Calculator):

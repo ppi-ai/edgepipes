@@ -29,6 +29,7 @@ node: {
     stringOptions: { key:"onWord";  value:"open" }
     stringOptions: { key:"offImage"; value:"images/off.png" }
     stringOptions: { key:"errImage"; value:"images/err.png" }
+    stringOptions: { key:"errWord";  value:"Unknown" }
     doubleOptions: { key:"statusOnTime"; value:4.0 }
   }
 }
@@ -42,6 +43,8 @@ node: {
     stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
     stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
     stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"onWord";  value:"open" }
+    stringOptions: { key:"errWord";  value:"Unknown" }
     stringOptions: { key:"audio"; value:"name:Jabra" }
   }
 }

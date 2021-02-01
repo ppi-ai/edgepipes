@@ -3,6 +3,8 @@ input_stream: "input_video"
 node: {
   calculator: "HandDetector2"
   input_stream: "input_video"
+  input_stream: "yolo_detections"
+  input_stream: "door_status"
   output_stream: "hand_detections"
 }
 
@@ -25,13 +27,14 @@ node: {
     stringOptions: { key:"errImage"; value:"images/err.png" }
     stringOptions: { key:"onWord";  value:"Thumb up" }
     stringOptions: { key:"errWord";  value:"No Mask" }
-    doubleOptions: { key:"statusOnTime"; value: 4.0 }
+    doubleOptions: { key:"statusOnTime"; value: 4.5 }
     }
 }
 
 node: {
   calculator: "TRTYoloDetector"
   input_stream: "input_video"
+  input_stream: "door_status"
   output_stream: "yolo_detections"
 }
 
@@ -43,6 +46,8 @@ node: {
     stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
     stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
     stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"errWord"; value:"No Mask" }
+    stringOptions: { key:"onWord";  value:"Thumb up" }
     stringOptions: { key:"audio"; value:"name:Jabra" }
   }
 }
