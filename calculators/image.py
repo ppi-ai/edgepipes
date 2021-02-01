@@ -131,13 +131,13 @@ class ShowStatusImageFromFiles(Calculator):
         self._current_status = status
         now = datetime.now()
         timestamp = datetime.timestamp(now)
-        if status == 'ON':
+        if self._current_status == 'ON':
             self._last_on_time = time.time()
             self.set_output(0, ImageData(self.onImage, timestamp))
-        elif status == 'ERR':
+        elif self._current_status == 'ERR':
             self._last_on_time = time.time()
             self.set_output(0, ImageData(self.errImage, timestamp))
-        elif status == 'OFF':
+        elif self._current_status == 'OFF':
             self.set_output(0, ImageData(self.offImage, timestamp))
 
     def process(self):
@@ -145,7 +145,7 @@ class ShowStatusImageFromFiles(Calculator):
         face = self.get(1)
         if isinstance(data, TextData) and isinstance(face, TextData):
             if face.text is not None:
-                print("CURRENT Status = {}, face = {}".format(self._current_status, face.text))
+                #print("CURRENT Status = {}, face = {}".format(self._current_status, face.text))
                 if self.onWord in data.text and face.text != self.errWord:
                     self.set_status('ON')
                     
@@ -153,8 +153,10 @@ class ShowStatusImageFromFiles(Calculator):
                     self.set_status('ERR')            
                     
         if (self._current_status != 'OFF') and self.status_on_time > 0 and self._last_on_time + self.status_on_time <= time.time():
-            print("Status OFF by timeout")
+            #print("Status OFF by timeout")
             self.set_status('OFF')
+            
+        self.set_output(1, TextData(self._current_status, datetime.timestamp(datetime.now())))
         return True
         
 class ShowStatusImageFromFilesdummy(Calculator):

@@ -33,6 +33,11 @@ class FaceRecognizer(Calculator):
         _load_known_images()
 
     def process(self):
+        status = self.get(1)
+        if isinstance(status, TextData):
+            if status.text == 'ON' or status.text == 'ERR':
+                return False
+                
         image = self.get(0)
         if isinstance(image, ImageData):
             nf = image.image.copy()

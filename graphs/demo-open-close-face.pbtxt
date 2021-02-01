@@ -5,6 +5,7 @@ output_stream: "output_video"
 node: {
   calculator: "face.face.FaceRecognizer"
   input_stream: "input_video"
+  input_stream: "door_status"
   output_stream: "output_face"
   output_stream: "face_recognized"
 }
@@ -21,6 +22,7 @@ node: {
   calculator: "ShowStatusImageFromFiles"
   input_stream: "voice_to_word"
   input_stream: "face_recognized"
+  output_stream: "door_light"
   output_stream: "door_status"
   map_node_options: {
     stringOptions: { key:"onImage"; value:"images/on.png" }
@@ -46,7 +48,7 @@ node: {
 
 node: {
     calculator: "ShowImage"
-    input_stream: "door_status"
+    input_stream: "door_light"
     map_node_options: {
         stringOptions: { key:"windowTitle"; value:"Door Status" }
     }

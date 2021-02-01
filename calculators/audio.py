@@ -140,30 +140,31 @@ class VoskVoiceToTextCalculator(Calculator):
         audio = self.get(0)
         face  = self.get(1)
         
-        if face.text is not None:
-            if isinstance(audio, AudioData):
-                if self.rec.AcceptWaveform(audio.audio):
-                    result = self.rec.Result()
-                    try:
-                        result_json = json.loads(result)
-                    except json.decoder.JSONDecodeError as e:
-                        print("Voice2Text: Failed to parse voice json:", e)
-                        print(result)
+        if isinstance(face, TextData):
+            if face.text is not None:
+                if isinstance(audio, AudioData):
+                    if self.rec.AcceptWaveform(audio.audio):
+                        result = self.rec.Result()
+                        try:
+                            result_json = json.loads(result)
+                        except json.decoder.JSONDecodeError as e:
+                            print("Voice2Text: Failed to parse voice json:", e)
+                            print(result)
+                        else:
+                            if 'text' in result_json:
+                                text = result_json['text']
+                                if text:
+                                    print("Voice2Text:", repr(text), result_json)
+                                    self.set_output(0, VoiceTextData(text, audio.timestamp, info=result_json))
                     else:
-                        if 'text' in result_json:
-                            text = result_json['text']
+                        partial_result = self.rec.PartialResult()
+                        partial_json = json.loads(partial_result)
+                        if 'partial' in partial_json:
+                            text = partial_json['partial']
                             if text:
-                                print("Voice2Text:", repr(text), result_json)
-                                self.set_output(0, VoiceTextData(text, audio.timestamp, info=result_json))
-                else:
-                    partial_result = self.rec.PartialResult()
-                    partial_json = json.loads(partial_result)
-                    if 'partial' in partial_json:
-                        text = partial_json['partial']
-                        if text:
-                            print("Voice2Text (partial): ", repr(text))
-                            self.set_output(1, VoiceTextData(text, audio.timestamp, info=partial_json))
-                return True
+                                print("Voice2Text (partial): ", repr(text))
+                                self.set_output(1, VoiceTextData(text, audio.timestamp, info=partial_json))
+                    return True
         return False
 
 
