@@ -60,9 +60,14 @@ node: {
     }
 }
 
+
 node: {
-  calculator: "ConsumerNode"
-  input_stream: "door_status"
+    calculator: "ShowImage"
+    input_stream: "input_video"
+    map_node_options: {
+        stringOptions: { key:"windowTitle"; value:"Input" }
+    }
 }
+
 
 
