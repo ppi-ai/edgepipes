@@ -8,6 +8,7 @@ import wave
 from datetime import datetime
 import threading
 from calculators import tts
+import numpy as np
 
 class AudioData:
     def __init__(self, audio, timestamp):
@@ -255,7 +256,30 @@ class PlaySound(Calculator):
     def close(self):
         self.stop_sound()
 
-
+class TriggerWordDetector(Calculator):
+    
+    def __init__(self, name, s, options=None):
+        super().__init__(name, s, options)
+        from triggerword.triggerword import TriggerModel
+        self.input_data = [None]
+        
+        self.model = TriggerModel()
+        
+    def process(self):
+        audio = self.get(0)
+        
+        if audio is not None:
+            result  = self.model.detect(np.frombuffer(audio.audio, dtype=np.int16).tolist())
+           
+            if result:
+                text = "Trigger word detected"
+            else:
+                text = "No Trigger word"
+            print(text)
+            self.set_output(0, TextData(text, audio.timestamp))
+            return True
+        return False
+    
 _pyaudio = None
 
 
@@ -305,3 +329,5 @@ def _find_audio_index_by_name(name, is_output):
                 print(f"Found audio device {device_name} at audio index {i}")
                 return i
     return None
+    
+    

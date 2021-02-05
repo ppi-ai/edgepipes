@@ -1,0 +1,12 @@
+input_stream: "input_audio"
+
+node: {
+  calculator: "TriggerWordDetector"
+  input_stream: "input_audio"
+  output_stream: "trigger_word"
+}
+
+node: {
+    calculator: "ConsumerNode"
+    input_stream: "trigger_word"
+}

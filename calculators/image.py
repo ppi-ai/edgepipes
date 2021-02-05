@@ -348,3 +348,5 @@ class SobelEdgesCalculator(Calculator):
                 sobelx = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=5)
                 self.set_output(0, ImageData(sobelx, image.timestamp))
             return True
+            
+

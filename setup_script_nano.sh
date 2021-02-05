@@ -25,6 +25,10 @@ gsettings set org.gnome.gedit.preferences.editor scheme 'oblivion'
 pip install flask
 pip install flask-socketio
 pip install pyvis
+pip install pyttsx3
+pip install soundevice
+pip install python_speech_features
+
 
 # setup git
 echo "Setting up git"
