@@ -44,10 +44,13 @@ class HandDetector2(Calculator):
         image  = self.get(0)
         mask   = self.get(1)
         status = self.get(2)
+        
+        # If door is open or in error state; do not process the video frames
         if isinstance(status, TextData):
             if status.text == 'ON' or status.text == 'ERR':
                 return False
-                
+        
+        # If face mask is detected then check for hand gesture:
         if isinstance(mask, TextData):
             print("Face detected : ", mask.text)
             if isinstance(image, ImageData):

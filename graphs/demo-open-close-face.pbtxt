@@ -30,7 +30,7 @@ node: {
     stringOptions: { key:"offImage"; value:"images/off.png" }
     stringOptions: { key:"errImage"; value:"images/err.png" }
     stringOptions: { key:"errWord";  value:"Unknown" }
-    doubleOptions: { key:"statusOnTime"; value:4.0 }
+    doubleOptions: { key:"statusOnTime"; value:5.0 }
   }
 }
 
@@ -40,9 +40,9 @@ node: {
   input_stream: "voice_to_text"
   input_stream: "face_recognized"
   map_node_options: {
-    stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
-    stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
-    stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"onOpenMorn"; value:"Good morning, welcome" }
+    stringOptions: { key:"onOpenEven"; value:"Good evening, welcome" }
+    stringOptions: { key:"sorry"; value:"Sorry you do not have access" }
     stringOptions: { key:"onWord";  value:"open" }
     stringOptions: { key:"errWord";  value:"Unknown" }
     stringOptions: { key:"audio"; value:"name:Jabra" }

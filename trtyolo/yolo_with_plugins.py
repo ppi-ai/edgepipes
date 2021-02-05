@@ -289,7 +289,8 @@ class TrtYOLO(object):
 
         boxes, scores, classes = _postprocess_yolo(
             trt_outputs, img.shape[1], img.shape[0], conf_th)
-
+        
+        print(scores)
         # clip x1, y1, x2, y2 within original image
         boxes[:, [0, 2]] = np.clip(boxes[:, [0, 2]], 0, img.shape[1]-1)
         boxes[:, [1, 3]] = np.clip(boxes[:, [1, 3]], 0, img.shape[0]-1)

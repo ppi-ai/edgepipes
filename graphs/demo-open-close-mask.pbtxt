@@ -43,9 +43,9 @@ node: {
   input_stream: "thumb_detections"
   input_stream: "yolo_detections"
   map_node_options: {
-    stringOptions: { key:"onOpenMorn"; value:"sounds/gm_welcome.wav" }
-    stringOptions: { key:"onOpenEven"; value:"sounds/ge_welcome.wav" }
-    stringOptions: { key:"sorry"; value:"sounds/sorry_no_access.wav" }
+    stringOptions: { key:"onOpenMorn"; value:"Good morning, welcome" }
+    stringOptions: { key:"onOpenEven"; value:"Good morning, welcome" }
+    stringOptions: { key:"sorry"; value:"Please wear a mask" }
     stringOptions: { key:"errWord"; value:"No Mask" }
     stringOptions: { key:"onWord";  value:"Thumb up" }
     stringOptions: { key:"audio"; value:"name:Jabra" }

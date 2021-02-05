@@ -6,6 +6,8 @@ import pyaudio
 import re
 import wave
 from datetime import datetime
+import threading
+from calculators import tts
 
 class AudioData:
     def __init__(self, audio, timestamp):
@@ -187,7 +189,7 @@ class PlaySound(Calculator):
                 self.errWord = options['errWord']
             if 'onWord' in options:
                 self.onWord = options['onWord']
-
+        
     def process(self):
         text = self.get(0)
         face = self.get(1)
@@ -203,7 +205,7 @@ class PlaySound(Calculator):
                     self.sound_table[self.onWord] = self.options["onOpenMorn"]
                 else:
                     self.sound_table[self.onWord] = self.options["onOpenEven"]
-		    
+        
         if not isinstance(text, TextData):
             if self._stream and not self._stream.is_active():
                 self.stop_sound()
@@ -223,28 +225,17 @@ class PlaySound(Calculator):
                 print(f"On '{text.text}' playing {sound_file} (already playing)")
                 return True
             self.stop_sound()
-
-        print(f"On '{text.text}' playing {sound_file}")
-
-        try:
-            # open the file for reading.
-            self._wf = wave.open(sound_file, 'rb')
-            self._sound = sound_file
-
-            # length of data to read.
-            chunk = 1024
-            paud = get_pyaudio()
-            self._stream = paud.open(format=paud.get_format_from_width(self._wf.getsampwidth()),
-                                     output_device_index=self.audio_index,
-                                     channels=self._wf.getnchannels(),
-                                     rate=self._wf.getframerate(),
-                                     frames_per_buffer=chunk,
-                                     stream_callback=self._playing_callback,
-                                     output=True)
-            self._stream.start_stream()
-            return True
-        except FileNotFoundError:
-            print("Could not open the sound file", sound_file)
+        
+        if ('welcome' in sound_file) and ('Thumb up' not in self.onWord):
+            play = sound_file + ' {}'.format(face.text)
+        else :
+            play = sound_file
+        
+        
+        print(f"On '{text.text}' playing {play}")
+        t = threading.Thread(target=tts.play, args=(play,))
+        t.start()
+        
         return False
 
     def _playing_callback(self, in_data, frame_count, time_info, status):

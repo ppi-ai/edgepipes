@@ -289,7 +289,7 @@ class TRTYoloDetector(Calculator):
                 
         if isinstance(image, ImageData):
             nf = image.image.copy()
-            boxes, confs, clss = self.yolo.detect(nf, 0.3)
+            boxes, confs, clss = self.yolo.detect(nf, 0.8)
             d = []
             for i in range(len(boxes)):
                 c = int(clss[i])
