@@ -7,6 +7,13 @@ node: {
 }
 
 node: {
-    calculator: "ConsumerNode"
+  calculator: "PlayAlarm"
+  input_stream: "trigger_word"
+  input_stream: "Alarm"
+}
+
+node: {
+    calculator: "SwitchButton"
     input_stream: "trigger_word"
+    output_stream: "Alarm"
 }

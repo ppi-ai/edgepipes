@@ -28,7 +28,7 @@ pip install pyvis
 pip install pyttsx3
 pip install soundevice
 pip install python_speech_features
-
+pip install beepy
 
 # setup git
 echo "Setting up git"

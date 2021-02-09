@@ -9,6 +9,7 @@ from datetime import datetime
 import threading
 from calculators import tts
 import numpy as np
+from beepy import beep
 
 class AudioData:
     def __init__(self, audio, timestamp):
@@ -268,7 +269,7 @@ class TriggerWordDetector(Calculator):
     def process(self):
         audio = self.get(0)
         
-        if audio is not None:
+        if isinstance(audio, AudioData):
             result  = self.model.detect(np.frombuffer(audio.audio, dtype=np.int16).tolist())
            
             if result:
@@ -276,10 +277,29 @@ class TriggerWordDetector(Calculator):
             else:
                 text = "No Trigger word"
             print(text)
-            self.set_output(0, TextData(text, audio.timestamp))
+            self.set_output(0, TextData(result, audio.timestamp))
             return True
         return False
-    
+
+class PlayAlarm(Calculator):
+
+    def __init__(self, name, s, options=None):
+        super().__init__(name, s, options)
+        
+    def process(self):
+        trigger = self.get(0)
+        alarm   = self.get(1)
+        
+        if isinstance(trigger, TextData):
+            if trigger.text:
+                beep(sound='coin')
+        elif isinstance(alarm, TextData):
+            if (alarm.text == 'Alarm ON'):
+                beep(sound='coin')
+        
+        
+        return True
+            
 _pyaudio = None
 
 

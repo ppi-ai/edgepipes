@@ -19,11 +19,9 @@ class TriggerModel():
         self.sample_rate = sample_rate
         self.resample_rate = resample_rate
         self.model_path = 'triggerword/models/tr_model.tflite'
-        # Sliding window
-        self.window = np.zeros(int(self.rec_duration * self.resample_rate) * 2)
         
         self.model = self._build_model()
-        self.buffer_size = int(self.rec_duration*self.sample_rate)
+        self.buffer_size = int(self.rec_duration*self.sample_rate) * 2
         self.buffer = []
         
     def _build_model(self):
@@ -39,40 +37,35 @@ class TriggerModel():
         std = x.std(axis=axis) + eps
         return (x-mean)/std
     
-    def _add_buffer(self, x):
+    def _addToBuffer(self, x):
         for d in x:
             self.buffer.append(d)
     
-    def _clear_buffer(self):
-        self.buffer = self.buffer[8000:]
-       
+    def _slideBuffer(self):
+        self.buffer = self.buffer[self.buffer_size//2:]
+               
     def detect(self, x):
     
         if len(self.buffer) < self.buffer_size:
-            self._add_buffer(x)
+            self._addToBuffer(x)
         else:
            
             rec = np.array(self.buffer[: self.buffer_size])
 
-            self._clear_buffer()
-            self._add_buffer(x)
+            self._slideBuffer()
+            self._addToBuffer(x)
             
             new_fs = self.sample_rate
             
-            # Save recording onto sliding window
-            self.window[:len(self.window)//2] = self.window[len(self.window)//2:]
-            self.window[len(self.window)//2:] = rec
-            
             # Compute features
-            mfccs = mfcc(self.window, 
+            mfccs = mfcc(rec, 
                          samplerate=new_fs,
                          winlen=0.01,
                          winstep=0.01,
                          numcep=self.num_mfcc,
                          nfilt=40,
                          nfft=480,
-                         appendEnergy=True)
-                             
+                         appendEnergy=True)                 
 
             mfccs = TriggerModel._normalize(mfccs, axis=0)
             deltas = delta(mfccs, 2)
@@ -89,7 +82,7 @@ class TriggerModel():
             output_data = self.model.get_tensor(output_details[0]['index'])
             
             val = output_data[0][0]
-            
+            print(val)
             if val > self.word_threshold:
                 return True
             else:

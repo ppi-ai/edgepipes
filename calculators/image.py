@@ -159,6 +159,38 @@ class ShowStatusImageFromFiles(Calculator):
         self.set_output(1, TextData(self._current_status, datetime.timestamp(datetime.now())))
         return True
         
+class SwitchButton(Calculator):
+
+    _update_image = True
+
+    def __init__(self, name, s, options=None):
+        super().__init__(name, s, options)
+        self.image = np.zeros((300, 300, 3), np.uint8)
+        cv2.circle(self.image, (150, 150), 100, (128, 255, 128), -1)
+        cv2.imshow(name, self.image)
+        cv2.setMouseCallback(name, self._toggle)
+        self.switch_state =  'Alarm OFF'
+
+    def _toggle(self, event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONUP:
+            if self.switch_state == 'Alarm ON':
+                self.switch_state  = 'Alarm OFF'   
+           
+    def process(self):
+        trigger = self.get(0)
+
+        if isinstance(trigger, TextData):
+            if trigger.text:
+                cv2.circle(self.image, (150, 150), 100, (128, 128, 255), -1)
+                self.switch_state  = 'Alarm ON'
+                
+        if self.switch_state == 'Alarm OFF':
+            cv2.circle(self.image, (150, 150), 100, (128, 255, 128), -1)
+        cv2.imshow(self.name, self.image)
+        
+        self.set_output(0, TextData(self.switch_state, datetime.timestamp(datetime.now())))
+        return True 
+        
 class InputSwitchButton(SwitchNode):
 
     _update_image = True
@@ -187,7 +219,6 @@ class InputSwitchButton(SwitchNode):
                 cv2.circle(self.image, (150, 150), 100, (128, 255, 128), -1)
             cv2.imshow(self.name, self.image)
         return super().process()
-
 
 class CaptureNode(Calculator):
 
