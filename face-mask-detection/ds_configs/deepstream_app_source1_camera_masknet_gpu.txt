@@ -64,7 +64,7 @@ enable=1
 gpu-id=0
 # Modify as necessary
 # GPU engine file
-model-engine-file=/home/jetson/face-mask-detection/experiment_dir_final/resnet18_detector_12.trt
+model-engine-file=/home/jetson/edgepipes/face-mask-detection/experiment_dir_final/resnet18_detector_12.trt
 batch-size=1
 #Required by the app for OSD, not a plugin property
 bbox-border-color0=0;1;0;1

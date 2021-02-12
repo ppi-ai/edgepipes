@@ -10,10 +10,10 @@
 gpu-id=0
 net-scale-factor=0.0039215697906911373
 tlt-model-key=tlt_encode
-tlt-encoded-model=/home/jetson/face-mask-detection/experiment_dir_final/resnet18_detector_12.etlt
+tlt-encoded-model=/home/jetson/edgepipes/face-mask-detection/experiment_dir_final/resnet18_detector_12.etlt
 labelfile-path=labels_masknet.txt
 # GPU Engine File
-model-engine-file=/home/jetson/face-mask-detection/experiment_dir_final/resnet18_detector_12.trt
+model-engine-file=/home/jetson/edgepipes/face-mask-detection/experiment_dir_final/resnet18_detector_12.trt
 # DLA Engine File
 # model-engine-file=/home/nvidia/detectnet_v2_models/detectnet_4K-fddb-12/resnet18_RGB960_detector_fddb_12_int8.etlt_b1_dla0_int8.engine
 input-dims=3;544;960;0
@@ -28,14 +28,14 @@ cluster-mode=1
 interval=0
 gie-unique-id=1
 is-classifier=0
-classifier-threshold=0.8
+classifier-threshold=0.85
 output-blob-names=output_bbox/BiasAdd;output_cov/Sigmoid
 
 
 [class-attrs-0]
-pre-cluster-threshold=0.4
+pre-cluster-threshold=0.3
 group-threshold=1
-eps=0.3
+eps=0.9
 minBoxes=1
 detected-min-w=0
 detected-min-h=0
@@ -44,9 +44,9 @@ detected-max-h=0
 
 
 [class-attrs-1]
-pre-cluster-threshold=0.4
+pre-cluster-threshold=0.3
 group-threshold=1
-eps=0.3
+eps=0.9
 minBoxes=1
 detected-min-w=0
 detected-min-h=0
