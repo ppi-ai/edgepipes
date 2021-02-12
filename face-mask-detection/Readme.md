@@ -1,7 +1,7 @@
 # Running face mask detection on NVIDIA Jetson Nano.
-## Note: Currently Jetson Nano does not support INT8. So will stcik to fp16
+## Note: Currently Jetson Nano does not support INT8. So will stick to fp16
 
-## Install Deepstream on Jetson Nano (Refer [NVIDIA's webpage](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_Quickstart.html#jetson-setup)
+## Install Deepstream on Jetson Nano (Refer [NVIDIA's webpage](https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_Quickstart.html#jetson-setup))
 ### Install Dependencies
 Enter the following commands to install the prerequisite packages:
 ```
@@ -53,7 +53,7 @@ sudo vi /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
 deb https://repo.download.nvidia.com/jetson/common r32.4 main
 deb https://repo.download.nvidia.com/jetson/<platform> r32.4 main
 ```
-Where <platform> identifies the platform’s processor:
+Where 'platform' identifies the platform’s processor:
 t186 for Jetson TX2 series
 
 t194 for Jetson AGX Xavier series or Jetson Xavier NX
@@ -61,11 +61,10 @@ t194 for Jetson AGX Xavier series or Jetson Xavier NX
 t210 for Jetson Nano or Jetson TX1
 
 For example, if your platform is Jetson Xavier NX:
-
+```
 deb https://repo.download.nvidia.com/jetson/common r32.4 main
-
 deb https://repo.download.nvidia.com/jetson/t194 r32.4 main
-
+```
 * Save and close the source configuration file.
 
 * Enter the commands:
@@ -82,7 +81,7 @@ Using the apt-server
 ```
 sudo vi /etc/apt/sources.list.d/nvidia-l4t-apt-source.list
 ```
-*Change the repository name and download URL in the deb commands shown below: 
+* Change the repository name and download URL in the deb commands shown below: 
 ```
 deb https://repo.download.nvidia.com/jetson/common r32.4 main
 ```
